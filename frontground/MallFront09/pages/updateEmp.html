@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>修改</title>
+  <link rel="stylesheet" type="text/css" href="../css/style.css" />
+</head>
+<body>
+<div id="wrap">
+  <div id="top_content">
+    <div id="header">
+      <div id="rightheader">
+        <p>{{dateNow}}<br/></p>
+      </div>
+      <div id="topheader">
+        <h1 id="title"><a href="#">SpringBoot-Vue-MallDemo-MallUserManage</a></h1>
+      </div>
+      <div id="navigation"></div>
+    </div>
+    <div id="content">
+      <p id="whereami"></p>
+      <h1>修改员工信息:</h1>
+      <form>
+        <table cellpadding="0" cellspacing="0" border="0" class="form_table">
+          <tr>
+            <td valign="middle" align="right">id:</td>
+            <td valign="middle" align="left" ><input v-model="emp.empId" name="" readonly/></td>
+          </tr>
+          <tr>
+            <td valign="middle" align="right">姓名:</td>
+            <td valign="middle" align="left"><input type="text" class="inputgri" name="" v-model="emp.empName"/></td>
+          </tr>
+          <tr>
+            <td valign="middle" align="right">年龄:</td>
+            <td valign="middle" align="left"><input type="text" class="inputgri" name="" v-model="emp.empAge"/></td>
+          </tr>
+          <tr>
+            <td valign="middle" align="right">性别:</td>
+            <td valign="middle" align="left">
+              <input type="radio" name="" v-model="emp.empGender" value="boy" checked>男
+              <input type="radio" name="" v-model="emp.empGender" value="girl">女
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td><input type="button" class="button" value="提交" /></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+  </div>
+  <div id="footer">
+    <div id="footer_bg">geswander@gmail.com</div>
+  </div>
+</div>
+</body>
+</html>
+
+<script src="../js/vue-2.6.10.js"></script>
+<script src="../js/axios.min.js"></script>
+<script>
+
+  //创建axios的默认配置
+  let instance = axios.create({
+    baseURL : "http://localhost:8081",
+    timeout : 2000,
+  });
+
+  //添加响应拦截器
+  instance.interceptors.response.use(function (resp){
+    return resp;
+  },function (err){
+    alert("后端服务器出错，请联系程序员！");
+  })
+
+
+  let app = new Vue({
+    el:"#wrap",
+    data:{
+      dateNow:"",
+      emp:{"empId":1,"empName":"23","empGender":"girl"},   //要修改的员工对象，在页面被初始化时进行异步加载
+    },
+    methods:{
+
+    },
+    created(){  //钩子函数
+      let thisVue = this;
+
+      //获取当前日期
+      let date = new Date();
+      this.dateNow = date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate();
+
+      instance.get("emp/getOne",)
+    }
+  })
+</script>

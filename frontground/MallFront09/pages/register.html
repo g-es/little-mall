@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>注册页</title>
+  <link rel="stylesheet" type="text/css" href="../css/style.css" />
+</head>
+<body>
+<div id="wrap">
+  <div id="top_content">
+    <div id="header">
+      <div id="rightheader">
+        <p>{{dateNow}}<br/></p>
+      </div>
+      <div id="topheader">
+        <h1 id="title">
+          <a href="#">SpringBoot-Vue-MallDemo-MallUserManage</a>
+        </h1>
+      </div>
+      <div id="navigation"></div>
+    </div>
+    <div id="content">
+      <h1>注册</h1>
+      <h5><span class="error">{{regError}}</span></h5>
+      <form>
+        <table cellpadding="0" cellspacing="0" border="0" class="form_table">
+          <tr>
+            <td valign="middle" align="right">用户名:</td>
+            <td valign="middle" align="left">
+              <input type="text" class="inputgri" v-model="user.mallUserName"/>
+            </td>
+            <td>
+              <span class="error">{{userNameIsExist}}</span>
+            </td>
+            
+          </tr>
+          <tr>
+            <td valign="middle" align="right">真实姓名:</td>
+            <td valign="middle" align="left">
+              <input type="text" class="inputgri" v-model="user.mallUserRealName" />
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td valign="middle" align="right">密码:</td>
+            <td valign="middle" align="left">
+              <input type="password" class="inputgri" v-model="user.mallUserPassword" />
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td valign="middle" align="right">性别:</td>
+            <td valign="middle" align="left">
+              <input type="radio" class="inputgri" v-model="user.mallUserGender" value="boy" checked/>男
+              <input type="radio" class="inputgri" v-model="user.mallUserGender" value="girl"/>女
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td valign="middle" align="right">验证码:</td>
+            <td valign="middle" align="left">
+              <input type="text" class="inputgri" v-model="verifyCode" valign="middle"/>
+            </td>
+            <td><span class="error">{{verifyError}}</span></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td valign="middle" align="left">
+              <img id="verifyImg" src="http://localhost:8081/malluser-manage-api/v1/verifyImg" valign="middle"/>
+            </td>
+            <td><a href="javascript:;" valign="middle" @click="getVerifyImg()">看不清楚？换一张</a></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <input type="button" class="button" value="提交 &raquo;"  @click="send()"/>
+            </td>
+            <td></td>
+          </tr>
+        </table>
+      </form>
+    </div>
+  </div>
+  <div id="footer">
+    <div id="footer_bg">geswander@gmail.com</div>
+  </div>
+</div>
+</body>
+</html>
+
+
+<script src="../js/jquery-3.4.1.min.js"></script>
+<script src="../js/vue-2.6.10.js"></script>
+<script src="../js/axios.min.js"></script>
+<script>
+
+  //创建axios的默认配置
+  let instance = axios.create({
+    baseURL : "http://localhost:8070",
+    timeout : 2000,
+  });
+
+  //添加响应拦截器
+  instance.interceptors.response.use(function (resp){
+    return resp;
+  },function (err){
+    alert("后端服务器出错，请联系程序员！");
+    alert(err);
+  })
+
+  //允许跨域携带cookie,否则在后端项目中session无法共享
+  axios.defaults.withCredentials=true;
+
+
+  new Vue({
+    el:"#wrap",
+    data:{
+      dateNow:"",
+      regError:"",
+      userNameIsExist:"",
+      verifyError:'',
+      user:{},   //user对象
+      verifyCode:""
+    },
+    methods: {
+      getVerifyImg() {
+        //发送请求时，拼接一个随机数。否则一直是同一个请求，浏览器会缓存，不再发送
+        $("#verifyImg").attr("src", 'http://localhost:8070/malluser-manage-api/v1/verifyImg?'+ new Date().getTime());
+      },
+      //注册
+      send() {
+
+        let thisVue = this;
+        //先校验 验证码
+        instance.post("http://localhost:8070/malluser-manage-api/v1/matchVerifyCode/?verifyCode="+thisVue.verifyCode).then(function (resp) {
+          console.log("resp.data  =====  "+resp.data);
+          if (resp.data.code === "0") {   //验证码匹配成功
+            //使用axios发送put请求,进行注册
+            instance.put("http://localhost:8070/malluser-manage-api/v1/userRegister", thisVue.user).then(function (result) {
+              if (result.data.code === '0') {  //注册成功
+                alert("注册成功！");
+                //注册成功后，存储登录对象
+                window.sessionStorage.setItem("mallUserRealName",result.data.data.mallUserRealName);
+                window.sessionStorage.setItem("mallUserName",result.data.data.mallUserName);
+                location.href = "empGoodsList.html";
+              } else if (result.data.code === '301') {  //用户名已存在
+                thisVue.userNameIsExist = result.data.msg;
+              }else if (result.data.code === '302') {   //注册失败
+                thisVue.regError = result.data.msg;
+              }
+            });
+          } else if (resp.data.code === "200") {   //验证码匹配失败
+            thisVue.verifyError = resp.data.msg;
+          }
+        });
+
+      }
+    },
+    created(){
+      let date = new Date();
+      this.dateNow = date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate();
+    }
+  });
+</script>

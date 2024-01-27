@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>添加页</title>
+  <link rel="stylesheet" type="text/css" href="../css/style.css" />
+</head>
+<body>
+<div id="wrap">
+  <div id="top_content">
+    <div id="header">
+      <div id="rightheader">
+        <p>{{dateNow}}<br/></p>
+      </div>
+      <div id="topheader">
+        <h1 id="title">
+          <a href="#">SpringBoot-Vue-MallDemo-MallUserManage</a>
+        </h1>
+      </div>
+      <div id="navigation"></div>
+    </div>
+    <div id="content">
+      <h1>添加员工:</h1>
+      <form action="">
+        <table cellpadding="0" cellspacing="0" border="0" class="form_table">
+          <tr>
+            <td valign="middle" align="right">姓名:</td>
+            <td valign="middle" align="left">
+              <input type="text" class="inputgri" name="empName" />
+            </td>
+          </tr>
+          <tr>
+            <td valign="middle" align="right">年龄:</td>
+            <td valign="middle" align="left">
+              <input type="text" class="inputgri" name="empAge" />
+            </td>
+          </tr>
+          <tr>
+            <td valign="middle" align="right">性别:</td>
+            <td valign="middle" align="left">
+              <input type="radio" name="empGender" value="true" checked>男
+              <input type="radio" name="empGender" value="false">女
+            </td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>
+              <input type="submit" class="button" value="提交" />
+            </td>
+          </tr>
+        </table>
+      </form>
+    </div>
+  </div>
+  <div id="footer">
+    <div id="footer_bg">geswander@gmail.com</div>
+  </div>
+</div>
+</body>
+</html>
