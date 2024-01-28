@@ -1,30 +1,49 @@
 package test.study.ge.malluser.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.http.server.reactive.ServerHttpResponse;
+import org.springframework.web.cors.reactive.CorsUtils;
+import org.springframework.web.server.ServerWebExchange;
+import org.springframework.web.server.WebFilter;
+import org.springframework.web.server.WebFilterChain;
+import reactor.core.publisher.Mono;
 
 
 @Configuration
-public class CorsConfig implements Filter {
+public class CorsConfig {
 
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-        throws IOException, ServletException {
-        HttpServletResponse res = (HttpServletResponse) response;
-        HttpServletRequest req = (HttpServletRequest) request;
-        res.addHeader("Access-Control-Allow-Credentials", "true");
-        res.addHeader("Access-Control-Allow-Origin", req.getHeader("origin"));
-        res.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT");
-        res.addHeader("Access-Control-Allow-Headers", "Content-Type,X-CAF-Authorization-Token," +
-            "sessionToken,X-TOKEN,customercoderoute,authorization,conntectionid,Cookie");
-        if (((HttpServletRequest) request).getMethod().equals("OPTIONS")) {
-            response.getWriter().println("ok");
-            return;
-        }
-        chain.doFilter(request, response);
+    @Bean
+    public WebFilter corsFilter2() {
+        return (ServerWebExchange ctx, WebFilterChain chain) -> {
+            ServerHttpRequest request = ctx.getRequest();
+            if (CorsUtils.isCorsRequest(request)) {
+                HttpHeaders requestHeaders = request.getHeaders();
+                ServerHttpResponse response = ctx.getResponse();
+                HttpMethod requestMethod = requestHeaders.getAccessControlRequestMethod();
+                HttpHeaders headers = response.getHeaders();
+
+                // Set only one origin or use wildcard '*'
+                headers.set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, requestHeaders.getOrigin());
+                headers.addAll(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, requestHeaders.getAccessControlRequestHeaders());
+
+                if (requestMethod != null) {
+                    headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, requestMethod.name());
+                }
+
+                headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+                headers.add(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "*");
+
+                if (request.getMethod() == HttpMethod.OPTIONS) {
+                    response.setStatusCode(HttpStatus.OK);
+                    return Mono.empty();
+                }
+            }
+            return chain.filter(ctx);
+        };
     }
 }

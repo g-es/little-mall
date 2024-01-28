@@ -47,12 +47,13 @@ public class MallUserController {
     }
 
     //校验验证码
-    @PostMapping("matchVerifyCode")
+    @PostMapping("/matchVerifyCode")
     @ResponseBody
     public Result matchVerifyCode(@RequestParam String verifyCode, HttpSession session) {
         String code = session.getAttribute("code").toString();
         System.out.println("code = " + code);
         System.out.println("verifyCode = " + verifyCode);
+        System.out.println(code.equalsIgnoreCase(verifyCode) +  " equal");
         if (code.equalsIgnoreCase(verifyCode)) {
             return Result.success();
         } else {
@@ -60,8 +61,7 @@ public class MallUserController {
         }
     }
 
-    @PutMapping(value = "/userLogin")
-//    @RequestMapping(value = "/userLogin", method = RequestMethod.PUT)
+    @PostMapping(value = "/userLogin")
     @ResponseBody
     public Result userLogin(@RequestBody @Validated MallParam mallUserParam) {
         String mallUserName = mallUserParam.getMallUserName();
@@ -74,7 +74,7 @@ public class MallUserController {
         }
     }
 
-    @PutMapping(value = "/userRegister")
+    @PostMapping(value = "/userRegister")
     @ResponseBody
     public Result userRegister(@RequestBody MallParam mallUserParam) {
         String mallUserName = mallUserParam.getMallUserName();
@@ -99,7 +99,7 @@ public class MallUserController {
 
     }
 
-    @RequestMapping(value = "/getAllGoodsOfUserName", method = RequestMethod.PUT)
+    @RequestMapping(value = "/getAllGoodsOfUserName", method = RequestMethod.POST)
     public Result getOrderAndAllGoodsOfUserName(@RequestBody MallParam mallParam) {
         System.out.println(mallParam.getMallUserName());
         List<HashMap> returnList = new ArrayList<>();
@@ -137,7 +137,7 @@ public class MallUserController {
         return Result.success(returnList);
     }
 
-    @RequestMapping(value = "/getAllGoods", method = RequestMethod.PUT)
+    @RequestMapping(value = "/getAllGoods", method = RequestMethod.GET)
     public Result getAllGoods() {
         return mallGoodClient.getAllGoods();
 
