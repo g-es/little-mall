@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Arial', sans-serif;
+}
+
+.table {
+  width: 100%;
+  background-color: #fff;
+  color: dimgray;
+  border-collapse: collapse;
+  margin-top: 20px; 
+  box-shadow: 0 14px 14px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden; 
+}
+
+.table_header {
+  background-color: #78210e; 
+  color: #f6e2e2;
+}
+
+.table td {
+  text-align: left;
+  padding: 8px;
+}
+
+.table th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
