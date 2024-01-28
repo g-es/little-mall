@@ -53,7 +53,6 @@ public class MallUserController {
         String code = session.getAttribute("code").toString();
         System.out.println("code = " + code);
         System.out.println("verifyCode = " + verifyCode);
-        System.out.println(code.equalsIgnoreCase(verifyCode) +  " equal");
         if (code.equalsIgnoreCase(verifyCode)) {
             return Result.success();
         } else {

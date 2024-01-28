@@ -26,8 +26,6 @@ public class CorsConfig {
                 ServerHttpResponse response = ctx.getResponse();
                 HttpMethod requestMethod = requestHeaders.getAccessControlRequestMethod();
                 HttpHeaders headers = response.getHeaders();
-
-                // Set only one origin or use wildcard '*'
                 headers.set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, requestHeaders.getOrigin());
                 headers.addAll(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, requestHeaders.getAccessControlRequestHeaders());
 
