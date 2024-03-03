@@ -121,3 +121,53 @@ a:hover {
   bottom: 0;
   width: 100%;
 }
+
+.cart-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.cart-overlay {
+  background: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-item {
+  margin-bottom: 10px;
+  color: black;
+  display: flex;
+  align-items: center;
+}
+
+.purchase-button,
+.close-button,
+.show-cart-button {
+  background-color: #78210e;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.purchase-button:hover,
+.close-button:hover,
+.show-cart-button:hover {
+  background-color:#ac361b;
+}

@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Modal from 'react-modal';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ShoppingCartModal from '../ShoppingCartModal';
 
 
-interface Emp {
+export interface Emp {
     mallGoodId: string;
     mallGoodName: string;
     mallGoodPrice: string;
@@ -13,12 +16,27 @@ interface Emp {
 }
 
 const MallGoodsList: React.FC = () => {
+    const [showCart, setShowCart] = useState(false);
+    const [cartItems, setCartItems] = useState<Emp[]>([]);
     const [dateNow, setDateNow] = useState<string>('');
     const [emps, setEmps] = useState<Emp[]>([]);
     const source = 'http://localhost:8751/malluser-service/malluser-manage-api/v1';
     const storedMallUserName = sessionStorage.getItem('mallUserName');
     const storedMallUserId = sessionStorage.getItem('mallUserId');
     const navigate = useNavigate();
+
+    const addToCart = (item: Emp) => {
+        setCartItems((prevItems) => [...prevItems, item]);
+    };
+    const removeItemFromCart = (mallGoodId: string) => {
+        setCartItems((prevItems) => prevItems.filter((item) => item.mallGoodId !== mallGoodId));
+    };
+
+    const toggleShowCart = () => {
+        setShowCart(!showCart);
+    };
+
+
 
     useEffect(() => {
         // Fetch data on component mount
@@ -35,29 +53,7 @@ const MallGoodsList: React.FC = () => {
         }
     };
 
-    const addGoodOrderById = async (mallGoodId: string) => {
-        console.log("good" + mallGoodId);
-        try {
-            const response = await axios.post(
-                `${source}/saveUserOrders`,
-                {
-                    mallUserId: storedMallUserId,
-                    mallUserName: storedMallUserName,
-                    mallGoodsList: [mallGoodId],
-                }
-            );
 
-            if (response.data.code === '0') {
-                alert('Shopping Success');
-                // navigate('/empGoodsList');
-            } else {
-                alert('Shopping failed');
-            }
-        } catch (error) {
-            console.error('Error while adding order:', error);
-            alert('Server error. Please try again later.');
-        }
-    };
 
     const returnUserMallDetail = () => {
         navigate('/empGoodsList');
@@ -73,7 +69,7 @@ const MallGoodsList: React.FC = () => {
                 <td>{emp.mallGoodArea}</td>
                 <td>{emp.mallGoodStatus}</td>
                 <td>
-                    <a href="javascript:;" onClick={() => addGoodOrderById(emp.mallGoodId)}>purchase</a>
+                    <a href="javascript:;" onClick={() => addToCart(emp)}>add to cart</a>
 
                 </td>
             </tr>
@@ -98,6 +94,12 @@ const MallGoodsList: React.FC = () => {
                     <h3 style={{ float: 'right', cursor: 'pointer' }} onClick={() => returnUserMallDetail()} >
                         Back to order history
                     </h3>
+                    <div>
+                        <button className="show-cart-button" onClick={toggleShowCart}>
+                            <ShoppingCartIcon />
+                        </button>
+                        <ShoppingCartModal isOpen={showCart} onRequestClose={toggleShowCart} cartItems={cartItems} setCartItems={setCartItems} />
+                    </div>
                     <table className="table">
                         <thead>
                             <tr className="table_header">
@@ -114,6 +116,8 @@ const MallGoodsList: React.FC = () => {
                             {renderTableRows()}
                         </tbody>
                     </table>
+
+
                 </div>
             </div>
             <div id="footer">
